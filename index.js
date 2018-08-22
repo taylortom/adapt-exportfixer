@@ -30,11 +30,12 @@ function run() {
 
 function processZip(filename, done) {
   const unzipdir = path.join(TEMP_DIR, filename.replace(path.extname(filename), ''));
+  const newZipName = filename.replace(path.extname(filename), `-UPDATED${path.extname(filename)}`);
   async.series([
     async.apply(unzip, filename, unzipdir),
     async.apply(checkJson, unzipdir),
     async.apply(removeBuildIncludes, unzipdir),
-    async.apply(zip, unzipdir, filename.replace(path.extname(filename), `-UPDATED${path.extname(filename)}`))
+    async.apply(zip, unzipdir, newZipName)
   ], (error) => {
     if(error) return done(error);
     console.log(`- Fixed ${filename}`);
