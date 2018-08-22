@@ -33,7 +33,7 @@ function processZip(filename, done) {
   const newZipName = filename.replace(path.extname(filename), `-UPDATED${path.extname(filename)}`);
   async.series([
     async.apply(unzip, filename, unzipdir),
-    async.apply(checkJson, unzipdir),
+    async.apply(fixContent, unzipdir),
     async.apply(removeBuildIncludes, unzipdir),
     async.apply(zip, unzipdir, newZipName)
   ], (error) => {
@@ -48,11 +48,10 @@ function unzip(filename, unzipdir, cb) {
   cb();
 }
 
-function checkJson(unzipdir, cb) {
+function fixContent(unzipdir, cb) {
   const JSON_ROOT = path.join(unzipdir, 'src', 'course', 'en');
   let filesChanged;
-  try {
-    // process and fix any content json issues
+  try { // process and fix any content json issues
     filesChanged = fixContent(mergeJsonData(JSON_ROOT));
   } catch(e) {
     return cb(e);
